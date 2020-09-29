@@ -88,28 +88,32 @@ const TransactionList = ({ navigation }) => {
     return datas
   }
 
-  console.log('sortValue: ', sortValue)
-
   const sortedData = () => {
     switch(sortValue.id) {
       case 0:
         return dataState
       case 1:
         return dataState.sort((a, b) => {
-          var curName = a.beneficiary_name.toUpperCase(); 
-          var nextName = b.beneficiary_name.toUpperCase();
+          const curName = a.beneficiary_name.toUpperCase(); 
+          const nextName = b.beneficiary_name.toUpperCase();
           return curName < nextName ? -1 : 
              curName > nextName ? 1 : 0
         })
       case 2:
         return dataState.sort((a, b) => {
-          var curName = a.beneficiary_name.toUpperCase(); 
-          var nextName = b.beneficiary_name.toUpperCase();
+          const curName = a.beneficiary_name.toUpperCase(); 
+          const nextName = b.beneficiary_name.toUpperCase();
           return curName < nextName ? 1 : 
              curName > nextName ? -1 : 0
         })
       case 3:
-        return dataState
+        return dataState.sort((a, b) => 
+          new Date(a.created_at).getTime() > 
+          new Date(b.created_at).getTime() ? 1 : -1 )
+      case 4:
+        return dataState.sort((a, b) => 
+          new Date(b.created_at).getTime() >
+          new Date(a.created_at).getTime() ? 1 : -1 )
       default:
         return dataState
     }
@@ -147,7 +151,6 @@ const TransactionList = ({ navigation }) => {
                 />
               <MyText>{dt.name}</MyText>
             </TouchableOpacity>
-            
           )}
         </View>
       </Modal>
