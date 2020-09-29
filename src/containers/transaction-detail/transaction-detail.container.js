@@ -31,13 +31,24 @@ const TransactionDetail = ({ navigation }) => {
   
   const [showDetail, setShowDetail] = useState(true)
 
+  const { 
+    id, 
+    amount, 
+    remark,
+    created_at,
+    unique_code,
+    sender_bank, 
+    account_number,
+    beneficiary_name, 
+    beneficiary_bank, 
+  } = transactionDetail
+
   const copyToClipboard = () => {
     Clipboard.setString(imei)
     Alert('Copied to clipboard', true)
   }
 
   const detailRow = (rowOne, rowTwo, rowThree, rowFour) => {
-    
     return (
       <View style={styles.flexRow}>
         <View style={{ width: '60%' }}>
@@ -51,18 +62,6 @@ const TransactionDetail = ({ navigation }) => {
       </View>
     )
   }
-
-  const { 
-    id, 
-    amount, 
-    remark,
-    created_at,
-    unique_code,
-    sender_bank, 
-    account_number,
-    beneficiary_name, 
-    beneficiary_bank, 
-  } = transactionDetail
 
   return (
     <Container>
@@ -97,7 +96,7 @@ const TransactionDetail = ({ navigation }) => {
               <MyText bold>{beneficiary_bank.toUpperCase()}</MyText>
             </View>
 
-            {detailRow(beneficiary_name, account_number, 'NOMINAL', `Rp. ${ Lookups.Convert.formatMoney(amount) }`)}
+            {detailRow(beneficiary_name.toUpperCase(), account_number, 'NOMINAL', `Rp. ${ Lookups.Convert.formatMoney(amount) }`)}
             {detailRow('BERITA TRANSFER', remark, 'KODE UNIK', unique_code)}
             {detailRow('WAKTU DIBUAT', created_at)}
           </View>
