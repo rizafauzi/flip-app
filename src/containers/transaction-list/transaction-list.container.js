@@ -24,6 +24,8 @@ import {
 } from '../../components'
 import { Colors, Fonts } from '../../styles'
 
+
+import styles from './transaction-list.style'
 import { TransactionContext } from '../../contexts'
 
 const sortingChoice = [{
@@ -58,6 +60,10 @@ const TransactionList = ({ navigation }) => {
     name: 'URUTKAN'
   }) 
 
+  useEffect(() => {
+    onRefetch()
+  }, [])
+
   const onRefetch = () => {
     APIKit.get('/frontend-test')
     .then(({ data }) => {
@@ -70,9 +76,9 @@ const TransactionList = ({ navigation }) => {
     })
   }
 
-  useEffect(() => {
-    onRefetch()
-  }, [])
+  const onSortAction = () => {
+    setShowModal(true)
+  }
 
   const mappedData = (data) => {
     const datas = []
@@ -82,39 +88,59 @@ const TransactionList = ({ navigation }) => {
     return datas
   }
 
+  console.log('sortValue: ', sortValue)
+
+  const sortedData = () => {
+    switch(sortValue.id) {
+      case 0:
+        return dataState
+      case 1:
+        return dataState.sort((a, b) => {
+          var curName = a.beneficiary_name.toUpperCase(); 
+          var nextName = b.beneficiary_name.toUpperCase();
+          return curName < nextName ? -1 : 
+             curName > nextName ? 1 : 0
+        })
+      case 2:
+        return dataState.sort((a, b) => {
+          var curName = a.beneficiary_name.toUpperCase(); 
+          var nextName = b.beneficiary_name.toUpperCase();
+          return curName < nextName ? 1 : 
+             curName > nextName ? -1 : 0
+        })
+      case 3:
+        return dataState
+      default:
+        return dataState
+    }
+  }
+
+  const filteredData = () => {
+    return sortedData().filter(dt => 
+      dt.sender_bank.toLowerCase().includes(searchValue.toLowerCase()) ||
+      dt.beneficiary_name.toLowerCase().includes(searchValue.toLowerCase()) ||
+      dt.beneficiary_bank.toLowerCase().includes(searchValue.toLowerCase()) ||
+      dt.amount.toString().includes(searchValue.toLowerCase())
+    )
+  }
+
   const modal = () => {
     return (
       <Modal 
         isVisible={showModal}
         onClose={() => setShowModal(false)}
       >
-        <View style={{
-          padding: 15,
-          width: '80%',
-          borderRadius: 5,
-          backgroundColor: Colors.White,
-        }}>
+        <View style={styles.baseModal}>
           {sortingChoice.map((dt, index) => 
             <TouchableOpacity key={index} 
-              style={{
-                padding: 10,
-                width: '100%',
-                marginBottom: 5,
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-              }}
+              style={styles.button}
               onPress={() => {
                 setSortValue(dt)
                 setShowModal(false)
               }}
             >
               <Fontisto 
-                style={{
-                  fontSize: 20,
-                  color: Colors.Orange,
-                  marginRight: 10
-                }}
+                style={styles.radioButton}
                 name={sortValue.id === dt.id ? 
                   'radio-btn-active' : 
                   'radio-btn-passive' }
@@ -128,29 +154,18 @@ const TransactionList = ({ navigation }) => {
     )
   }
 
-  const onSortAction = () => {
-    setShowModal(true)
-  }
-
-  const filteredData = () => {
-    return dataState.filter(dt => dt.name.includes(searchValue))
-  }
-
   return (
     <Container>
       {modal()}
       <Header title={'Transaksi'} disable_navigate />
       <ScrollView 
+        style={styles.scrollView}
         refreshControl={
           <RefreshControl
             refreshing={fetchLoading}
             onRefresh={onRefetch}
           />
         }
-        style={{
-          padding: 10,
-          backgroundColor: Colors.LightGray,
-        }}
       >
         <SearchField 
           value={searchValue} 
@@ -161,7 +176,7 @@ const TransactionList = ({ navigation }) => {
         {fetchLoading ? 
           <SkeletonLoading />
           :
-          dataState.map((dt, index) => 
+          filteredData().map((dt, index) => 
             <TouchableWithoutFeedback
               key={index}
               onPress={() => {
