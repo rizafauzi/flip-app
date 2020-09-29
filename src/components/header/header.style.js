@@ -23,7 +23,7 @@ export default StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'center'
 	},
-	iconSearch: { fontSize: 20, color: Colors.Grey },
+	iconSearch: { fontSize: 20, color: Colors.Gray },
 	textInput: {
 		width: '85%',
 		height: '150%',
