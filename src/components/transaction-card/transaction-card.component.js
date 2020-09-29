@@ -7,7 +7,7 @@ import styles from './transaction-card.style'
 import { Colors, Fonts, Spacing } from '../../styles'
 import { Lookups } from '../../utils'
 
-const TransactionCard = ({ data='holaaa' }) => {
+const TransactionCard = ({ data }) => {
 
   const statusTrx = data.status === 'SUCCESS' ? true : false
   const statusDescription = data.status === 'SUCCESS' ? 'Berhasil' : 'Pengecekan'
@@ -24,7 +24,11 @@ const TransactionCard = ({ data='holaaa' }) => {
         </View>
         <MyText>{data.beneficiary_name.toUpperCase()}</MyText>
         <MyText>{
-          `Rp ${Lookups.Convert.formatMoney(data.amount)} • 8 April 2020 `}
+          `Rp ${Lookups.Convert.formatMoney(data.amount)} • ${new Date(data.created_at).toLocaleDateString('en-GB', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+          })} `}
         </MyText>
       </View>
       <View style={styles.statusContent} >

@@ -14,6 +14,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 
 import { 
   Modal, 
+  Alert,
   MyText, 
   Header,
   Container, 
@@ -44,7 +45,7 @@ const TransactionDetail = ({ navigation }) => {
   } = transactionDetail
 
   const copyToClipboard = () => {
-    Clipboard.setString(imei)
+    Clipboard.setString(id)
     Alert('Copied to clipboard', true)
   }
 
@@ -74,7 +75,12 @@ const TransactionDetail = ({ navigation }) => {
       >
         <View style={styles.header}>
           <MyText bold>{`ID TRANSAKSI: #${id}`}</MyText>
-          <MaterialCommunityIcons name="content-copy" style={styles.copyIcon} />
+          <TouchableOpacity
+            onPress={copyToClipboard}
+            style={{ width: '15%', height: '100%' }}
+          >
+            <MaterialCommunityIcons name="content-copy" style={styles.copyIcon} />
+          </TouchableOpacity>
         </View>
 
         <View style={styles.subHeader}>
@@ -98,7 +104,11 @@ const TransactionDetail = ({ navigation }) => {
 
             {detailRow(beneficiary_name.toUpperCase(), account_number, 'NOMINAL', `Rp. ${ Lookups.Convert.formatMoney(amount) }`)}
             {detailRow('BERITA TRANSFER', remark, 'KODE UNIK', unique_code)}
-            {detailRow('WAKTU DIBUAT', created_at)}
+            {detailRow('WAKTU DIBUAT', new Date(created_at).toLocaleDateString('en-GB', {
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric',
+            }))}
           </View>
         }
         

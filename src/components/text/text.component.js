@@ -9,7 +9,7 @@ const MyText = ({
   color,
   style,
   children,
-  size = Fonts.Medium
+  size = Fonts.Medium * 0.9
 }) => {
   
   return (
