@@ -15,16 +15,18 @@ import Fontisto from 'react-native-vector-icons/Fontisto'
 import APIKit from '../../api'
 import { 
   Modal, 
+  Image,
   MyText, 
   Header,
   Container, 
   SearchField,
+  NotFoundPage,
   SkeletonLoading, 
   TransactionCard, 
 } from '../../components'
 import { Colors, Fonts } from '../../styles'
 
-
+import { Images } from '../../../assets'
 import styles from './transaction-list.style'
 import { TransactionContext } from '../../contexts'
 
@@ -51,6 +53,7 @@ const sortingChoice = [{
 const TransactionList = ({ navigation }) => {
   const { setTransactionDetail } = useContext(TransactionContext) 
 
+  const [error, setError] = useState(false)
   const [dataState, setDataState] = useState([])
   const [showModal, setShowModal] = useState(false)
   const [searchValue, setSearchValue] = useState('')
@@ -65,12 +68,14 @@ const TransactionList = ({ navigation }) => {
   }, [])
 
   const onRefetch = () => {
+    setError(false)
     APIKit.get('/frontend-test')
     .then(({ data }) => {
       setDataState(mappedData(data))
       setFetchLoading(false)
     })
     .catch((err) => {
+      setError(true)
       setFetchLoading(false)
       console.log(err)
     })
@@ -108,12 +113,12 @@ const TransactionList = ({ navigation }) => {
         })
       case 3:
         return dataState.sort((a, b) => 
-          new Date(a.created_at).getTime() > 
-          new Date(b.created_at).getTime() ? 1 : -1 )
+          new Date(a.created_at.split(' ')[0]) > 
+          new Date(b.created_at.split(' ')[0]) ? 1 : -1 )
       case 4:
         return dataState.sort((a, b) => 
-          new Date(b.created_at).getTime() >
-          new Date(a.created_at).getTime() ? 1 : -1 )
+          new Date(b.created_at.split(' ')[0]) >
+          new Date(a.created_at.split(' ')[0]) ? 1 : -1 )
       default:
         return dataState
     }
@@ -178,6 +183,9 @@ const TransactionList = ({ navigation }) => {
         />
         {fetchLoading ? 
           <SkeletonLoading />
+          :
+          error ?
+          <NotFoundPage />
           :
           filteredData().map((dt, index) => 
             <TouchableWithoutFeedback

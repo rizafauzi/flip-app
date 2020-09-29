@@ -44,9 +44,19 @@ const TransactionDetail = ({ navigation }) => {
     beneficiary_bank, 
   } = transactionDetail
 
+  const createdDate = new Date(
+    created_at.split(' ').length > 0 ? 
+    created_at.split(' ')[0] : 
+    null 
+  ).toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  })
+
   const copyToClipboard = () => {
     Clipboard.setString(id)
-    Alert('Copied to clipboard', true)
+    Alert('ID Transaksi telah disalin ke clipboard', true)
   }
 
   const detailRow = (rowOne, rowTwo, rowThree, rowFour) => {
@@ -66,7 +76,7 @@ const TransactionDetail = ({ navigation }) => {
 
   return (
     <Container>
-      <Header title={'Transaction Detail'} navigation={navigation} />
+      <Header title={'Detail Transaksi'} navigation={navigation} />
       <ScrollView 
         style={{
           paddingTop: 20,
@@ -104,11 +114,7 @@ const TransactionDetail = ({ navigation }) => {
 
             {detailRow(beneficiary_name.toUpperCase(), account_number, 'NOMINAL', `Rp. ${ Lookups.Convert.formatMoney(amount) }`)}
             {detailRow('BERITA TRANSFER', remark, 'KODE UNIK', unique_code)}
-            {detailRow('WAKTU DIBUAT', new Date(created_at).toLocaleDateString('en-GB', {
-              day: 'numeric',
-              month: 'long',
-              year: 'numeric',
-            }))}
+            {detailRow('WAKTU DIBUAT', createdDate)}
           </View>
         }
         

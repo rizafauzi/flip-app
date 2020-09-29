@@ -9,6 +9,15 @@ import { Lookups } from '../../utils'
 
 const TransactionCard = ({ data }) => {
 
+  const createdDate = new Date(
+    data.created_at.split(' ').length > 0 ? 
+    data.created_at.split(' ')[0] : 
+    null 
+  ).toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  })
   const statusTrx = data.status === 'SUCCESS' ? true : false
   const statusDescription = data.status === 'SUCCESS' ? 'Berhasil' : 'Pengecekan'
   
@@ -24,11 +33,7 @@ const TransactionCard = ({ data }) => {
         </View>
         <MyText>{data.beneficiary_name.toUpperCase()}</MyText>
         <MyText>{
-          `Rp ${Lookups.Convert.formatMoney(data.amount)} • ${new Date(data.created_at).toLocaleDateString('en-GB', {
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric',
-          })} `}
+          `Rp ${Lookups.Convert.formatMoney(data.amount)} • ${createdDate} `}
         </MyText>
       </View>
       <View style={styles.statusContent} >
@@ -39,5 +44,7 @@ const TransactionCard = ({ data }) => {
     </View>
   )
 }
+
+
 
 export default TransactionCard
