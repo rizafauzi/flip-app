@@ -25,11 +25,11 @@ const SearchField = ({ value='', onChangeText, sortValue, onSortAction }) => {
         />
       </View>
       <TouchableOpacity 
-        sortValue={sortValue}
+        sortValue={sortValue.name}
         onPress={onSortAction}
         style={styles.statusContent} 
       >
-        <MyText bold size={Fonts.Small} color={Colors.Orange} >{sortValue}</MyText>
+        <MyText bold size={Fonts.Small} color={Colors.Orange} >{sortValue.name}</MyText>
         <Feather name="chevron-down" style={styles.arrowIcon} />
       </TouchableOpacity>
     </View>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext, useMemo } from 'react'
 import {
   View,
   ScrollView,
@@ -7,9 +7,10 @@ import {
   RefreshControl,
   TouchableOpacity,
   ActivityIndicator,
-  TouchableWithoutFeedback,
+  TouchableWithoutFeedback
 } from 'react-native'
 import Fontisto from 'react-native-vector-icons/Fontisto'
+
 
 import APIKit from '../../api'
 import { 
@@ -23,21 +24,55 @@ import {
 } from '../../components'
 import { Colors, Fonts } from '../../styles'
 
+import { TransactionContext } from '../../contexts'
 
-const TransactionList = () => {
-  const sortingChoice = [
-    'URUTKAN',
-    'Nama A-Z',
-    'Nama Z-A',
-    'Tanggal Terbaru',
-    'Tanggal Terlama',
-  ]
+const sortingChoice = [{
+  id: 0,
+  name: 'URUTKAN'
+}, {
+  id: 1,
+  name: 'Nama A-Z'
+},
+{
+  id: 2,
+  name: 'Nama Z-A'
+},
+{
+  id: 3,
+  name: 'Tanggal Terbaru'
+},
+{
+  id: 4,
+  name: 'Tanggal Terlama'
+}]
 
+const TransactionList = ({ navigation }) => {
+  const { setTransactionDetail } = useContext(TransactionContext) 
+
+  const [dataState, setDataState] = useState([])
+  const [showModal, setShowModal] = useState(false)
   const [searchValue, setSearchValue] = useState('')
   const [fetchLoading, setFetchLoading] = useState(true)
-  const [sortValue, setSortValue] = useState('URUTKAN') 
-  const [showModal, setShowModal] = useState(true)
-  const [dataState, setDataState] = useState([])
+  const [sortValue, setSortValue] = useState({
+    id: 0,
+    name: 'URUTKAN'
+  }) 
+
+  const onRefetch = () => {
+    APIKit.get('/frontend-test')
+    .then(({ data }) => {
+      setDataState(mappedData(data))
+      setFetchLoading(false)
+    })
+    .catch((err) => {
+      setFetchLoading(false)
+      console.log(err)
+    })
+  }
+
+  useEffect(() => {
+    onRefetch()
+  }, [])
 
   const mappedData = (data) => {
     const datas = []
@@ -46,19 +81,6 @@ const TransactionList = () => {
     }
     return datas
   }
-
-  useEffect(() => {
-    APIKit.get('/frontend-test')
-    .then(({ data }) => {
-      setDataState(mappedData(data))
-      setFetchLoading(false)
-    })
-    .catch((err) => {
-      setMyLoading(false)
-      console.log(err)
-    })
-  }, [])
-
 
   const modal = () => {
     return (
@@ -93,11 +115,11 @@ const TransactionList = () => {
                   color: Colors.Orange,
                   marginRight: 10
                 }}
-                name={sortValue === dt ? 
+                name={sortValue.id === dt.id ? 
                   'radio-btn-active' : 
                   'radio-btn-passive' }
                 />
-              <MyText>{dt}</MyText>
+              <MyText>{dt.name}</MyText>
             </TouchableOpacity>
             
           )}
@@ -110,16 +132,8 @@ const TransactionList = () => {
     setShowModal(true)
   }
 
-  const onRefreshPage = () => {
-    setFetchLoading(true)
-    APIKit.get('/frontend-test')
-    .then(data => {
-      setFetchLoading(false)
-    })
-    .catch((err) => {
-      setMyLoading(false)
-      console.log(err)
-    })
+  const filteredData = () => {
+    return dataState.filter(dt => dt.name.includes(searchValue))
   }
 
   return (
@@ -130,7 +144,7 @@ const TransactionList = () => {
         refreshControl={
           <RefreshControl
             refreshing={fetchLoading}
-            onRefresh={() => onRefreshPage()}
+            onRefresh={onRefetch}
           />
         }
         style={{
@@ -141,14 +155,25 @@ const TransactionList = () => {
         <SearchField 
           value={searchValue} 
           sortValue={sortValue}
-          onSortAction={() => onSortAction()}
+          onSortAction={onSortAction}
           onChangeText={setSearchValue} 
         />
         {fetchLoading ? 
           <SkeletonLoading />
           :
           dataState.map((dt, index) => 
-          <TransactionCard key={index} data={dt} />)
+            <TouchableWithoutFeedback
+              key={index}
+              onPress={() => {
+                setTransactionDetail(dt)
+                navigation.navigate('TransactionDetail')
+              }}
+            >
+              <View>
+                <TransactionCard data={dt} />
+              </View>
+            </TouchableWithoutFeedback>
+          )
         }
       </ScrollView>
     </Container>

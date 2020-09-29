@@ -24,7 +24,7 @@ const MyTextInput = ({
   accessibilityLabel,
   keyboardType = 'default',
   autoCapitalize = 'sentences',
-  placeholderTextColor = Colors.Grey,
+  placeholderTextColor = Colors.Gray,
 }) => {
   return (
     <TextInput

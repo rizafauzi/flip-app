@@ -21,7 +21,7 @@ export default StyleSheet.create({
   searchIcon: {
     fontSize: 20, 
     marginHorizontal: 5,
-    color: Colors.Grey
+    color: Colors.Gray
   },
   arrowIcon: {
     fontSize: 20, 
