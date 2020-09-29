@@ -2,7 +2,7 @@ import { Alert } from 'react-native'
 
 const CustomAlert = (message, status) => {
   Alert.alert(
-    status ? 'Congratulation' : 'Something Wrong',
+    status ? 'Selamat!' : 'Ada sesuatu yang salah',
     `${message}`,
     [{ text: 'OK', onPress: () => {} }],
     {
